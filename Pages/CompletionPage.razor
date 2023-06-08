@@ -1,0 +1,34 @@
+@page "/completion"
+
+@using AOAIServerSideBlazor.Data
+@using AzureOpenAIClient.Http
+@inject AzureOpenAIService azureOpenAIService 
+
+<PageTitle>Completion Example</PageTitle>
+
+<h3>Completion Example</h3>
+<p>
+<InputTextArea @bind-Value=@TextValue Cols="100" Rows="10" />
+</p>
+<br />
+<button class="btn btn-primary" @onclick="CallCompletion">Call Completion</button>
+
+@code {
+     string TextValue = "Four score and seven years ago";
+     CompletionResponse? completionResponse;
+    
+    async Task CallCompletion()
+    {
+        if (TextValue != null)
+        {
+            completionResponse = await azureOpenAIService.GetTextCompletionResponse(TextValue, 500);
+
+            if (completionResponse?.Choices.Count > 0)
+            {
+                TextValue = TextValue + completionResponse.Choices[0].Text;
+                StateHasChanged();
+            }
+        }
+
+    }
+}
